@@ -42,4 +42,6 @@ with open(args.file, 'rb') as f:
                                   headers=upload_headers,
                                   data=upload_data,
                                   files={"videofile": (file_name, f, file_mime_type)})
-print(upload_result.text)
+    video_uuid = upload_result.json()['video']['uuid']
+
+print('http://{0}:{1}{2}/{3}'.format(args.host, args.port, cfg['watch_url'], video_uuid))
