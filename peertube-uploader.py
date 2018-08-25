@@ -3,6 +3,7 @@ import os
 import requests
 import argparse
 import yaml
+from mimetypes import guess_type
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-u', '--username', help='Username', required=True)
@@ -18,6 +19,7 @@ args = parser.parse_args()
 
 cfg = yaml.load(open(args.config, 'r'))
 file_name = os.path.basename(args.file)
+file_mime_type = guess_type(args.file)[0]
 
 auth_url = '/api/v1/users/token'
 auth_data = {'client_id': cfg['client_id'],
@@ -41,5 +43,5 @@ with open(args.file, 'rb') as f:
     upload_result = requests.post('http://{0}:{1}{2}'.format(args.host, args.port, upload_url),
                                   headers=upload_headers,
                                   data=upload_data,
-                                  files={"videofile": (file_name, f, "video/mp4")})
+                                  files={"videofile": (file_name, f, file_mime_type)})
 print(upload_result.json())
