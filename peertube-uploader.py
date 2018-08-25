@@ -3,6 +3,7 @@ import os
 import requests
 import argparse
 import yaml
+from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-u', '--username', help='Username', required=True)
@@ -29,17 +30,21 @@ auth_data = {'client_id': cfg['client_id'],
              }
 
 upload_url = '/api/v1/videos/upload'
-upload_data = {'channelId': args.channel,
-               'privacy': '2' if args.private else '1',
-               'name': args.name if args.name else file_name
-               }
 auth_result = requests.post('http://{0}:{1}{2}'.format(args.host, args.port, auth_url), data=auth_data)
 access_token = (auth_result.json()['access_token'])
+
 upload_headers = {'Authorization': 'Bearer {0}'.format(access_token)}
 
+session = requests.Session()
 with open(args.file, 'rb') as f:
-    upload_result = requests.post('http://{0}:{1}{2}'.format(args.host, args.port, upload_url),
+    upload_data = MultipartEncoder({
+        'name': file_name,
+        'channelId': args.channel,
+        'privacy': '2' if args.private else '1',
+        'videofile': {"videofile": (file_name, f, "video/mp4")}
+        })
+
+    upload_result = session.post('http://{0}:{1}{2}'.format(args.host, args.port, upload_url),
                                   headers=upload_headers,
-                                  data=upload_data,
-                                  files={"videofile": (file_name, f, "video/mp4")})
+                                  data=upload_data)
 print(upload_result.json())
