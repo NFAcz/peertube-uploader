@@ -42,4 +42,4 @@ with open(args.file, 'rb') as f:
                                   headers=upload_headers,
                                   data=upload_data,
                                   files={"videofile": (file_name, f, file_mime_type)})
-print(upload_result.json())
+print(upload_result.text)
