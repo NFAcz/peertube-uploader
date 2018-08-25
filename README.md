@@ -6,6 +6,7 @@
  * PyYAML
 
 ## Usage
+First, add correct client ID and secret to config.yml.
 ````
 $ pip install -r requirements.txt
 $ ./peertube-uploader.py 
