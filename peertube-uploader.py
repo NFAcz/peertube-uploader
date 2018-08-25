@@ -21,7 +21,6 @@ cfg = yaml.load(open(args.config, 'r'))
 file_name = os.path.basename(args.file)
 file_mime_type = guess_type(args.file)[0]
 
-auth_url = '/api/v1/users/token'
 auth_data = {'client_id': cfg['client_id'],
              'client_secret': cfg['client_secret'],
              'grant_type': 'password',
@@ -30,17 +29,16 @@ auth_data = {'client_id': cfg['client_id'],
              'password': args.password
              }
 
-upload_url = '/api/v1/videos/upload'
 upload_data = {'channelId': args.channel,
                'privacy': '2' if args.private else '1',
                'name': args.name if args.name else file_name
                }
-auth_result = requests.post('http://{0}:{1}{2}'.format(args.host, args.port, auth_url), data=auth_data)
+auth_result = requests.post('http://{0}:{1}{2}'.format(args.host, args.port, cfg['auth_url']), data=auth_data)
 access_token = (auth_result.json()['access_token'])
 upload_headers = {'Authorization': 'Bearer {0}'.format(access_token)}
 
 with open(args.file, 'rb') as f:
-    upload_result = requests.post('http://{0}:{1}{2}'.format(args.host, args.port, upload_url),
+    upload_result = requests.post('http://{0}:{1}{2}'.format(args.host, args.port, cfg['upload_url']),
                                   headers=upload_headers,
                                   data=upload_data,
                                   files={"videofile": (file_name, f, file_mime_type)})
