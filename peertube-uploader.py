@@ -1,5 +1,7 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import os
+import sys
 import requests
 import argparse
 import yaml
@@ -33,8 +35,17 @@ upload_data = {'channelId': args.channel,
                'privacy': '2' if args.private else '1',
                'name': args.name if args.name else file_name
                }
-auth_result = requests.post('http://{0}:{1}{2}'.format(args.host, args.port, cfg['auth_url']), data=auth_data)
-access_token = (auth_result.json()['access_token'])
+
+if 'access_token' not in cfg.keys():
+    try:
+        auth_result = requests.post('http://{0}:{1}{2}'.format(args.host, args.port, cfg['auth_url']), data=auth_data)
+        access_token = (auth_result.json()['access_token'])
+    except:
+        print(auth_result.text)
+        sys.exit(1)
+else:
+    access_token =  cfg['access_token']
+
 upload_headers = {'Authorization': 'Bearer {0}'.format(access_token)}
 
 with open(args.file, 'rb') as f:
@@ -42,6 +53,10 @@ with open(args.file, 'rb') as f:
                                   headers=upload_headers,
                                   data=upload_data,
                                   files={"videofile": (file_name, f, file_mime_type)})
-    video_uuid = upload_result.json()['video']['uuid']
+    try:
+        video_uuid = upload_result.json()['video']['uuid']
+        print('http://{0}:{1}{2}/{3}'.format(args.host, args.port, cfg['watch_url'], video_uuid))
+    except:
+        print(upload_result.text)
+        sys.exit(1)
 
-print('http://{0}:{1}{2}/{3}'.format(args.host, args.port, cfg['watch_url'], video_uuid))
