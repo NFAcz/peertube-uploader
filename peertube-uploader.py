@@ -35,7 +35,7 @@ upload_data = {'channelId': args.channel,
                'name': args.name if args.name else file_name
                }
 
-if args.access_token is '':
+if args.access_token is 'access_token':
     try:
         auth_result = requests.post('{0}{1}'.format(args.endpoint, '/api/v1/users/token'), data=auth_data)
         access_token = (auth_result.json()['access_token'])
