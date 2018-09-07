@@ -1,5 +1,0 @@
-client_id: 'alnros92yi6cnifm7hj11ljor4kdmrhs'
-client_secret: 'himYncylMHLZYEkaVJVFhdWyPRXX4W6J'
-auth_url: '/api/v1/users/token'
-upload_url: '/api/v1/videos/upload'
-watch_url: '/videos/watch'
