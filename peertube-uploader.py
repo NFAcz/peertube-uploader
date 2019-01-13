@@ -17,6 +17,7 @@ parser.add_argument('-n', '--name', help='Name of the uploaded video')
 parser.add_argument('-ch', '--channel', help='Channel ID to upload to', default=os.getenv('PEERTUBE_CHANNEL_ID', '1'))
 parser.add_argument('-e', '--endpoint', help='Host name', default=os.getenv('PEERTUBE_ENDPOINT', 'http://localhost:9000'))
 parser.add_argument('--private', help='Set video as private', action='store_true')
+parser.add_argument('--nocomments', help='Disable comments', action='store_true')
 args = parser.parse_args()
 
 file_name = os.path.basename(args.file)
@@ -32,6 +33,7 @@ auth_data = {'client_id': args.client_id,
 
 upload_data = {'channelId': args.channel,
                'privacy': '2' if args.private else '1',
+               'commentsEnabled': False if args.nocomments else True,
                'name': args.name if args.name else file_name
                }
 
