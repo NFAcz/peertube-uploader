@@ -23,6 +23,10 @@ args = parser.parse_args()
 file_name = os.path.basename(args.file)
 file_mime_type = guess_type(args.file)[0]
 
+# If the channel-id is not integer, get the actual id via API
+if not isinstance(args.channel, int):
+    args.channel = requests.get('{0}{1}/{2}'.format(args.endpoint, '/api/v1/video-channels', args.channel)).json()['id']
+
 auth_data = {'client_id': args.client_id,
              'client_secret': args.client_secret,
              'grant_type': 'password',
